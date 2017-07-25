@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const getPostcssPlugins = require('./postcss_plugins.js');
 const helpers = require('./helpers');
+const pages = require('../config/pages');
 
 const webpackConfig = function(options) {
     const env = options.env;
@@ -17,7 +18,7 @@ const webpackConfig = function(options) {
 
     return {
         entry: {
-            polyfills: [helpers.root('src', 'js' ,'polyfills.js')],
+            polyfills: [helpers.root('src', 'js', 'polyfills.js')],
             app: [helpers.root('src', 'js', 'index.js')]
         },
         output: {
@@ -44,7 +45,7 @@ const webpackConfig = function(options) {
                 },
                 // styles
                 {
-                    test: /\.css$/,
+                    test: /\.p?css$/,
                     use: ['style-loader', 'css-loader', 'postcss-loader']
                 },
                 // images
@@ -53,6 +54,13 @@ const webpackConfig = function(options) {
                     use: {
                         loader: 'file-loader',
                         options: { name: img_folder + '[name].[ext]' }
+                    }
+                },
+                // pug templates
+                {
+                    test: /\.pug$/,
+                    use: {
+                        loader: 'pug-loader'
                     }
                 },
                 // fonts
@@ -74,8 +82,8 @@ const webpackConfig = function(options) {
                     test: /font\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                     use: {
                         loader: 'file-loader',
-                        options: { mimetype: 'application/font-woff', name: fonts_folder + '[name].[ext]' } 
-                    },               
+                        options: { mimetype: 'application/font-woff', name: fonts_folder + '[name].[ext]' }
+                    },
                 },
                 {
                     test: /font\.(ttf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -87,10 +95,7 @@ const webpackConfig = function(options) {
             ]
         },
         plugins: [
-            new HtmlWebpackPlugin({
-                inject: 'body',
-                template: 'src/index.html'
-            }),
+            ...pages.map(page => new HtmlWebpackPlugin(page)),
             new webpack.LoaderOptionsPlugin({
                 options: {
                     postcss: getPostcssPlugins()
@@ -103,7 +108,7 @@ const webpackConfig = function(options) {
                 }
             ])
         ]
-    }
+    };
 };
 
 module.exports = webpackConfig;

@@ -5,6 +5,10 @@
         "ecmaVersion": 7
     },
     "rules": {
-        "indent": ["error", 4, { "SwitchCase": 1 }]
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "camelcase": "off",
+        "comma-dangle": "off",
+        "no-bitwise": "off",
+        "linebreak-style": "off"
     }
 }

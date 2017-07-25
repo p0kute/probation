@@ -10,13 +10,13 @@ const config = webpackMerge.smart(commonConfig, {
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.p?css$/,
                 use: [
                     'style-loader?sourceMap=true',
                     'css-loader?sourceMap=true',
                     'postcss-loader?sourceMap=true'
                 ]
-            },
+            }
         ]
     },
     plugins: [

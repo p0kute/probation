@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const ENV = 'production';
 
@@ -27,7 +28,7 @@ const config = webpackMerge.smart(commonConfig, {
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.p?css$/,
                 use: ExtractTextPlugin.extract({
                     publicPath: '../../',
                     fallback: 'style-loader',
@@ -57,7 +58,7 @@ const config = webpackMerge.smart(commonConfig, {
                                 quality: '65-90',
                                 speed: 4,
                             },
-                            svgo:{
+                            svgo: {
                                 plugins: [
                                     { removeViewBox: false },
                                     { removeEmptyAttrs: false }
@@ -66,6 +67,15 @@ const config = webpackMerge.smart(commonConfig, {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.pug$/,
+                use: {
+                    loader: 'pug-loader',
+                    options: {
+                        pretty: true
+                    }
+                }
             }
         ]
     },
@@ -74,6 +84,12 @@ const config = webpackMerge.smart(commonConfig, {
             'process.env.NODE_ENV': JSON.stringify(ENV)
         }),
         new ExtractTextPlugin(CSS_FOLDER + '[name].css'),
+        new OptimizeCssAssetsPlugin({
+            assetNameRegExp: /.css$/g,
+            cssProcessor: require('cssnano'),
+            cssProcessorOptions: { discardComments: { removeAll: true } },
+            canPrint: true
+        }),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false,
